@@ -1,0 +1,7 @@
+---
+title: "Data Wrangling Project Showcase"
+author: "Alice Pao"
+date: "2024-02-25"
+categories: [portfolio, r]
+image: ""
+---

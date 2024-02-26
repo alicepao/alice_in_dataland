@@ -1,0 +1,156 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Data Science Blog",
+    "section": "",
+    "text": "Data Wrangling Project Showcase\n\n\n\n\n\n\nportfolio\n\n\nr\n\n\n\n\n\n\n\n\n\nFeb 25, 2024\n\n\nAlice Pao\n\n\n\n\n\n\n\n\n\n\n\n\nWindoes Function in PySpark\n\n\n\n\n\n\ntutorial\n\n\ncode\n\n\npyspark\n\n\n\n\n\n\n\n\n\nFeb 25, 2024\n\n\nAlice Pao\n\n\n\n\n\n\n\n\n\n\n\n\nNested Columns in Pyspark\n\n\n\n\n\n\ntutorial\n\n\ncode\n\n\npolars\n\n\n\n\n\n\n\n\n\nFeb 24, 2024\n\n\nAlice Pao\n\n\n\n\n\n\n\n\n\n\n\n\nHow to pull data from census.gov?\n\n\n\n\n\n\ntutorial\n\n\n\n\n\n\n\n\n\nFeb 11, 2024\n\n\nAlice Pao\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "How to pull data from census.gov?",
+    "section": "",
+    "text": "US Census has provided a lot of great data resources on topics like American population, places, and economy. These data can be used for data analysis projects and even training data for machine learning models. In this post, I’ll walk through the steps to pulling data from its API."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "Hi! This is Alice. I am studying data science at Brigham Young University-Idaho. I love story-telling, especially using data to find insights and solve problems.\nI am an aspiring data analyst. I specialize in using SQL for data extraction, R for data wrangling and data visualization, Excel for data anaysis, and PowerBI and Tableau for buidling dashoboards and report."
+  },
+  {
+    "objectID": "posts/welcome/index.html#request-access-key",
+    "href": "posts/welcome/index.html#request-access-key",
+    "title": "How to pull data from census.gov?",
+    "section": "Request Access Key",
+    "text": "Request Access Key\nFirst, we need to request an access key from this website. Fill out your information and once submitted, an email will be sent shortly to your email with an unique key. This key can be reused so remember to save it somewhere else.\n\nAfter getting your key, we are ready to access data from the API."
+  },
+  {
+    "objectID": "posts/welcome/index.html#find-data-table",
+    "href": "posts/welcome/index.html#find-data-table",
+    "title": "How to pull data from census.gov?",
+    "section": "Find Data Table",
+    "text": "Find Data Table\nThere are a couple of ways to find the data you want. You can go to the census data website to browse all provided tables there. Use the search bar to find what you want or if you already know what table you are looking for, you can type it in directly. For example, I want to collect the household income in 2020 from the American Community Survey. I then find the corresponding table number and head to this database page.\nHint: Table name should be the 6-digit Number. If you are not sure, you can also find it from the Notes tab.\n\nOn census’s database page, use ctrl+f to find your table. Right click variables and use your table name to find the data. In my case, it is B19001.\n\nIn this household income table, different codes represent different income gropus; therefore, I want to pull all of them so I can have the entire data set."
+  },
+  {
+    "objectID": "posts/welcome/index.html#connect-to-census-api",
+    "href": "posts/welcome/index.html#connect-to-census-api",
+    "title": "How to pull data from census.gov?",
+    "section": "Connect to Census API",
+    "text": "Connect to Census API\nHere comes the most important part, connecting to and download the data! First, make sure you download and import the census library.\n\n# from census import Census\n# import polars as pl\n# c = Census(\"YOUR ACCESS KEY\")\n\n# # Total Numbers of Household for total household income\n# total = c.acs5.state_county_blockgroup(('NAME', 'B19001_001E'), '16', '*', Census.ALL, year=2020)\n\n# # Print the retrieved data\n# #for row in data:\n# #    print(row)\n# df_total = pd.DataFrame(total)\n# # Rename columns\n# df_total = df_total.rename(columns={'NAME': 'Geography Group', 'B19001_001E': 'Total Numbers of Household', 'state': 'Idaho', 'county':'County', 'tract':'Tract', 'block group':'Block Group'})\n\n# # Display the DataFrame\n# df_total\n\nThis code block pulls the B19001_001E column, which is the total number of household from all income groups. Since I want to have data for other income groups as well, I wrote a function (with the help of ChatGPT of course) to handle this.\n\n# def get_income_group_data(year, income_min, income_max, state_code='16', county_code='*'):\n#     # Retrieve data for the specified income group\n#     group_data = c.acs5.state_county_blockgroup(('NAME', f'B19001_{income_min:03d}E'), state_code, county_code, Census.ALL, year=year)\n    \n#     # Convert data to DataFrame\n#     df_group = pl.DataFrame(group_data)\n    \n#     # Rename columns for better readability\n#     df_group = df_group.rename({'NAME': 'geography_group', f'B19001_{income_min:03d}E': 'total_numbers_of_household', 'state': 'idaho', 'block group':'block_group'})\n    \n#     return df_group\n\n\n# df_total = get_income_group_data(2020, 1, 2) # Income Group: total\n# df_10k_less = get_income_group_data(2020, 2, 3) # Income Group: less than $10,000\n# df_10k = get_income_group_data(2020, 3, 4) # Income Group: $10,000 - $14,999\n# df_15k = get_income_group_data(2020, 4, 5) #Income Group: $15,000 - $19,999\n# df_20k = get_income_group_data(2020, 5, 6) # Income Group: $20,000 - $24,999\n# df_25k = get_income_group_data(2020, 6, 7) # Income Group: $25,000 - $29,999\n# df_30k = get_income_group_data(2020, 7, 8) # Income Group: $30,000 - $44,999\n# df_35k = get_income_group_data(2020, 8, 9) # Income Group: $35,000 - $39,999\n# df_40k = get_income_group_data(2020, 9, 10) # Income Group: $40,000 - $44,999\n# df_45k = get_income_group_data(2020, 10, 11)  # Income Group: $45,000 - $49,999, Idaho\n# df_50k = get_income_group_data(2020, 11, 12) # Income Group: $50,000 - $59,999, Idaho \n# df_60k = get_income_group_data(2020, 12, 13) # Income Group: $60,000 - $74,999\n# df_75k = get_income_group_data(2020, 13, 14) # Income Group: $75,000 - $99,999\n# df_100k = get_income_group_data(2020, 14, 15) # Income Group: $100,000 - $124,999\n# df_125k = get_income_group_data(2020, 15, 16) # Income Group: $125,000 - $149,999\n# df_150k = get_income_group_data(2020, 16, 17) # Income Group: $150,000 - $199,999\n# df_200k = get_income_group_data(2020, 17, 18) # Income Group: $200,000+"
+  },
+  {
+    "objectID": "posts/welcome/index.html#combine-all-datasets",
+    "href": "posts/welcome/index.html#combine-all-datasets",
+    "title": "How to pull data from census.gov?",
+    "section": "Combine All Datasets",
+    "text": "Combine All Datasets\nAfter pulling all data from each income group, I created a new column to lable the groups before appending them. I use polars for data wrangling. It is a fairly new library similar to pandas but it is more efficient. I’ll introduce it more in the future. Here, I used with_columns() to create a new column. pl.lit() represents a literal value.\n\n# create a new column in each data set to indicate its income group\n# df_10k_less = df_10k_less.with_columns(\n#     income_group = pl.lit('10,000 less')\n# )\n# df_total = df_total.with_columns(\n#     income_group = pl.lit('total')\n# )\n# df_10k = df_10k.with_columns(\n#     income_group = pl.lit('10,000-14,999')\n# )\n# df_15k = df_15k.with_columns(\n#     income_group = pl.lit('15,000-19,999')\n# )\n\n# df_20k = df_20k.with_columns(\n#     income_group = pl.lit('20,000-24,999')\n# )\n# df_25k = df_25k.with_columns(\n#     income_group = pl.lit('25,000-29,999')\n# )\n# df_30k = df_30k.with_columns(\n#     income_group = pl.lit('30,000-34,999')\n# )\n# df_35k = df_35k.with_columns(\n#     income_group = pl.lit('35,000-39,999')\n# )\n# df_40k = df_40k.with_columns(\n#     income_group = pl.lit('40,000-44,999')\n# )\n# df_45k = df_45k.with_columns(\n#     income_group = pl.lit('45,000-49,999')\n# )\n# df_50k = df_50k.with_columns(\n#     income_group = pl.lit('50,000-59,999')\n# )\n# df_60k = df_60k.with_columns(\n#     income_group = pl.lit('60,000-74,999')\n# )\n# df_75k = df_75k.with_columns(\n#     income_group = pl.lit('75,000-99,999')\n# )\n# df_100k = df_100k.with_columns(\n#     income_group = pl.lit('100,000-124,999')\n# )\n# df_125k = df_125k.with_columns(\n#     income_group = pl.lit('125,000-149,999')\n# )\n# df_150k = df_100k.with_columns(\n#     income_group = pl.lit('150,000-199,999')\n# )\n# df_200k = df_100k.with_columns(\n#     income_group = pl.lit('200,000+')\n# )\n\nAfter creating columns for each data set, I use concat() to append them all into a new data set. concat() is used to combine all DataFrames, LazyFrames, and Series. For the how parameter, the options include: vertical’, ‘vertical_relaxed’, ‘diagonal’, ‘diagonal_relaxed’, ‘horizontal’, ‘align’.\n\n# # combine all rows together\n# df_all_income_group = pl.concat(\n#     [\n#         df_10k_less,\n#         df_10k,\n#         df_15k, \n#         df_20k, \n#         df_25k, \n#         df_30k, \n#         df_35k, \n#         df_40k, \n#         df_45k, \n#         df_50k, \n#         df_60k, \n#         df_75k, \n#         df_100k, \n#         df_125k, \n#         df_150k, \n#         df_200k, \n#         df_total\n#     ],\n#     how=\"vertical\",\n# )"
+  },
+  {
+    "objectID": "posts/welcome/index.html#conclusion",
+    "href": "posts/welcome/index.html#conclusion",
+    "title": "How to pull data from census.gov?",
+    "section": "Conclusion",
+    "text": "Conclusion\nI hope this tutorial helps you figure out how to connect to the census api and download the data you need. After getting the data, you’ll need to clean or transform them to a better format but this should give you a great start."
+  },
+  {
+    "objectID": "posts/pull_data_from_census/index.html",
+    "href": "posts/pull_data_from_census/index.html",
+    "title": "How to pull data from census.gov?",
+    "section": "",
+    "text": "US Census has provided a lot of great data resources on topics like American population, places, and economy. These data can be used for data analysis projects and even training data for machine learning models. In this post, I’ll walk through the steps to pulling data from its API."
+  },
+  {
+    "objectID": "posts/pull_data_from_census/index.html#request-access-key",
+    "href": "posts/pull_data_from_census/index.html#request-access-key",
+    "title": "How to pull data from census.gov?",
+    "section": "Request Access Key",
+    "text": "Request Access Key\nFirst, we need to request an access key from this website. Fill out your information and once submitted, an email will be sent shortly to your email with an unique key. This key can be reused so remember to save it somewhere else.\n\nAfter getting your key, we are ready to access data from the API."
+  },
+  {
+    "objectID": "posts/pull_data_from_census/index.html#find-data-table",
+    "href": "posts/pull_data_from_census/index.html#find-data-table",
+    "title": "How to pull data from census.gov?",
+    "section": "Find Data Table",
+    "text": "Find Data Table\nThere are a couple of ways to find the data you want. You can go to the census data website to browse all provided tables there. Use the search bar to find what you want or if you already know what table you are looking for, you can type it in directly. For example, I want to collect the household income in 2020 from the American Community Survey. I then find the corresponding table number and head to this database page.\nHint: Table name should be the 6-digit Number. If you are not sure, you can also find it from the Notes tab.\n\nOn census’s database page, use ctrl+f to find your table. Right click variables and use your table name to find the data. In my case, it is B19001.\n\nIn this household income table, different codes represent different income gropus; therefore, I want to pull all of them so I can have the entire data set."
+  },
+  {
+    "objectID": "posts/pull_data_from_census/index.html#connect-to-census-api",
+    "href": "posts/pull_data_from_census/index.html#connect-to-census-api",
+    "title": "How to pull data from census.gov?",
+    "section": "Connect to Census API",
+    "text": "Connect to Census API\nHere comes the most important part, connecting to and download the data! First, make sure you download and import the census library.\n\n# from census import Census\n# import polars as pl\n# c = Census(\"YOUR ACCESS KEY\")\n\n# # Total Numbers of Household for total household income\n# total = c.acs5.state_county_blockgroup(('NAME', 'B19001_001E'), '16', '*', Census.ALL, year=2020)\n\n# # Print the retrieved data\n# #for row in data:\n# #    print(row)\n# df_total = pd.DataFrame(total)\n# # Rename columns\n# df_total = df_total.rename(columns={'NAME': 'Geography Group', 'B19001_001E': 'Total Numbers of Household', 'state': 'Idaho', 'county':'County', 'tract':'Tract', 'block group':'Block Group'})\n\n# # Display the DataFrame\n# df_total\n\nThis code block pulls the B19001_001E column, which is the total number of household from all income groups. Since I want to have data for other income groups as well, I wrote a function (with the help of ChatGPT of course) to handle this.\n\n# def get_income_group_data(year, income_min, income_max, state_code='16', county_code='*'):\n#     # Retrieve data for the specified income group\n#     group_data = c.acs5.state_county_blockgroup(('NAME', f'B19001_{income_min:03d}E'), state_code, county_code, Census.ALL, year=year)\n    \n#     # Convert data to DataFrame\n#     df_group = pl.DataFrame(group_data)\n    \n#     # Rename columns for better readability\n#     df_group = df_group.rename({'NAME': 'geography_group', f'B19001_{income_min:03d}E': 'total_numbers_of_household', 'state': 'idaho', 'block group':'block_group'})\n    \n#     return df_group\n\n\n# df_total = get_income_group_data(2020, 1, 2) # Income Group: total\n# df_10k_less = get_income_group_data(2020, 2, 3) # Income Group: less than $10,000\n# df_10k = get_income_group_data(2020, 3, 4) # Income Group: $10,000 - $14,999\n# df_15k = get_income_group_data(2020, 4, 5) #Income Group: $15,000 - $19,999\n# df_20k = get_income_group_data(2020, 5, 6) # Income Group: $20,000 - $24,999\n# df_25k = get_income_group_data(2020, 6, 7) # Income Group: $25,000 - $29,999\n# df_30k = get_income_group_data(2020, 7, 8) # Income Group: $30,000 - $44,999\n# df_35k = get_income_group_data(2020, 8, 9) # Income Group: $35,000 - $39,999\n# df_40k = get_income_group_data(2020, 9, 10) # Income Group: $40,000 - $44,999\n# df_45k = get_income_group_data(2020, 10, 11)  # Income Group: $45,000 - $49,999, Idaho\n# df_50k = get_income_group_data(2020, 11, 12) # Income Group: $50,000 - $59,999, Idaho \n# df_60k = get_income_group_data(2020, 12, 13) # Income Group: $60,000 - $74,999\n# df_75k = get_income_group_data(2020, 13, 14) # Income Group: $75,000 - $99,999\n# df_100k = get_income_group_data(2020, 14, 15) # Income Group: $100,000 - $124,999\n# df_125k = get_income_group_data(2020, 15, 16) # Income Group: $125,000 - $149,999\n# df_150k = get_income_group_data(2020, 16, 17) # Income Group: $150,000 - $199,999\n# df_200k = get_income_group_data(2020, 17, 18) # Income Group: $200,000+"
+  },
+  {
+    "objectID": "posts/pull_data_from_census/index.html#combine-all-datasets",
+    "href": "posts/pull_data_from_census/index.html#combine-all-datasets",
+    "title": "How to pull data from census.gov?",
+    "section": "Combine All Datasets",
+    "text": "Combine All Datasets\nAfter pulling all data from each income group, I created a new column to lable the groups before appending them. I use polars for data wrangling. It is a fairly new library similar to pandas but it is more efficient. I’ll introduce it more in the future. Here, I used with_columns() to create a new column. pl.lit() represents a literal value.\n\n# create a new column in each data set to indicate its income group\n# df_10k_less = df_10k_less.with_columns(\n#     income_group = pl.lit('10,000 less')\n# )\n# df_total = df_total.with_columns(\n#     income_group = pl.lit('total')\n# )\n# df_10k = df_10k.with_columns(\n#     income_group = pl.lit('10,000-14,999')\n# )\n# df_15k = df_15k.with_columns(\n#     income_group = pl.lit('15,000-19,999')\n# )\n\n# df_20k = df_20k.with_columns(\n#     income_group = pl.lit('20,000-24,999')\n# )\n# df_25k = df_25k.with_columns(\n#     income_group = pl.lit('25,000-29,999')\n# )\n# df_30k = df_30k.with_columns(\n#     income_group = pl.lit('30,000-34,999')\n# )\n# df_35k = df_35k.with_columns(\n#     income_group = pl.lit('35,000-39,999')\n# )\n# df_40k = df_40k.with_columns(\n#     income_group = pl.lit('40,000-44,999')\n# )\n# df_45k = df_45k.with_columns(\n#     income_group = pl.lit('45,000-49,999')\n# )\n# df_50k = df_50k.with_columns(\n#     income_group = pl.lit('50,000-59,999')\n# )\n# df_60k = df_60k.with_columns(\n#     income_group = pl.lit('60,000-74,999')\n# )\n# df_75k = df_75k.with_columns(\n#     income_group = pl.lit('75,000-99,999')\n# )\n# df_100k = df_100k.with_columns(\n#     income_group = pl.lit('100,000-124,999')\n# )\n# df_125k = df_125k.with_columns(\n#     income_group = pl.lit('125,000-149,999')\n# )\n# df_150k = df_100k.with_columns(\n#     income_group = pl.lit('150,000-199,999')\n# )\n# df_200k = df_100k.with_columns(\n#     income_group = pl.lit('200,000+')\n# )\n\nAfter creating columns for each data set, I use concat() to append them all into a new data set. concat() is used to combine all DataFrames, LazyFrames, and Series. For the how parameter, the options include: vertical’, ‘vertical_relaxed’, ‘diagonal’, ‘diagonal_relaxed’, ‘horizontal’, ‘align’.\n\n# # combine all rows together\n# df_all_income_group = pl.concat(\n#     [\n#         df_10k_less,\n#         df_10k,\n#         df_15k, \n#         df_20k, \n#         df_25k, \n#         df_30k, \n#         df_35k, \n#         df_40k, \n#         df_45k, \n#         df_50k, \n#         df_60k, \n#         df_75k, \n#         df_100k, \n#         df_125k, \n#         df_150k, \n#         df_200k, \n#         df_total\n#     ],\n#     how=\"vertical\",\n# )"
+  },
+  {
+    "objectID": "posts/pull_data_from_census/index.html#conclusion",
+    "href": "posts/pull_data_from_census/index.html#conclusion",
+    "title": "How to pull data from census.gov?",
+    "section": "Conclusion",
+    "text": "Conclusion\nI hope this tutorial helps you figure out how to connect to the census api and download the data you need. After getting the data, you’ll need to clean or transform them to a better format but this should give you a great start."
+  },
+  {
+    "objectID": "posts/nested_columns_in_pyspark/index.html",
+    "href": "posts/nested_columns_in_pyspark/index.html",
+    "title": "Nested Columns in Pyspark",
+    "section": "",
+    "text": "When dealing with great volume of data which we often refer to as “big data”, it is common to have nested columns. They not only help with data format but also save a lot of memory. One of the most popular file formats that use nested columns is Parquet. Therefore, before jumping into nested columns, I want to spend some time explaining what Parquet is."
+  },
+  {
+    "objectID": "posts/nested_columns_in_pyspark/index.html#what-is-parquet",
+    "href": "posts/nested_columns_in_pyspark/index.html#what-is-parquet",
+    "title": "Nested Columns in Pyspark",
+    "section": "What is Parquet?",
+    "text": "What is Parquet?\nApache Parquet, mostly called as Parquet, is an open source file format that saves column-based data, created by databricks. It provides efficient data storeage and retrival. It is used to handle complex data structure and it compresses and decompresses data in a more efficient way compared to other traditional file formats like CSV.\nParquet can store data including images, tables, videos, and documents. One of its benefits is its ability to skip data, meaning when data is read in by queries, instead of reading the entire table, it only grabs the specific columns where the queries specifiy. This saves a lot of data processing time.\nBelow is taken from databricks. It compares Parquet with CVS. We can see that using Parquet file format is both cheaper and faster. Therefore, I highly recommend data science professionals familarize themselves with Parquet!"
+  },
+  {
+    "objectID": "posts/nested_columns_in_pyspark/index.html#what-is-nested-columns",
+    "href": "posts/nested_columns_in_pyspark/index.html#what-is-nested-columns",
+    "title": "Nested Columns in Pyspark",
+    "section": "What is Nested Columns?",
+    "text": "What is Nested Columns?\nNow, let’s talk about about nested columns. Just like the words suggest, a nested column is a column that has multiple comlumns nested in it. (I swear this is not a tongue twister!) You may ask, why do we need it? Well, having nested columns give us more flexibility as we can add additional columns into existing ones, which gives more control when we are dealing with complex data.\nHere is an example of normal columns:\n\nThis one takes the first name, middle name, and last name columns and nest them into a name column.\n\nBy doing so, we make a cleaner and more organized data structure and also save some storage space and data retrieval time."
+  },
+  {
+    "objectID": "posts/nested_columns_in_pyspark/index.html#different-types-of-nested-columns-in-pyspark",
+    "href": "posts/nested_columns_in_pyspark/index.html#different-types-of-nested-columns-in-pyspark",
+    "title": "Nested Columns in Pyspark",
+    "section": "Different Types of Nested Columns in Pyspark",
+    "text": "Different Types of Nested Columns in Pyspark\nThere are different types of nested columns we can utilize in Pyspark.\n\nArrayType It is an array of data type. Users can store a collection of same type of elements.\nMapType It is a map of key value pairs in a DataFrame. Users can store key-value mappings. It is similar to a dictionary in python.\nStructType It is a list or tuple value type in Python. It stores a collection of StructField."
+  },
+  {
+    "objectID": "posts/nested_columns_in_pyspark/index.html#how-to-create-nested-columns",
+    "href": "posts/nested_columns_in_pyspark/index.html#how-to-create-nested-columns",
+    "title": "Nested Columns in Pyspark",
+    "section": "How to Create Nested Columns?",
+    "text": "How to Create Nested Columns?\nBefore creating any of these datatypes, we need to import the following function from pyspark.\n\n# from pyspark.sql.types import *\n\nHere are the parameters for each of the three data types:\n\nArrayType:\n\n\nelementType: Defines the DataType for all elements in the array\ncontainsNull: This is an optional parameter. It declares whether the array can have null values or not.\n\n\n# array_data = [(3500, 5000, 8000, 2500, 4000)]\n# array_schema = ArrayType(StringType())\n# dataframe = spark.createDataFrame(data = array_data, schema = array_schema)   \n# dataframe.printSchema()   \n# dataframe.show(truncate=False)    \n\nThe Result: \n\nMapType:\n\n\nkeyType: Defines the DataType for the keys in the map.\nvalueType: Defines the DataType for the values in the map.\nvalueContainsNull: This is an optional parameter. It declares whether the map can have null values or not.\n\n\n# map_data = [('graphic designer', 3500), ('junior project manager', 5000), ('senior project manager', 8000), ('office assistant', 2500), ('junior data analyst', 4000)]\n# map_schema = MapType(StringType(), IntegerType())\n# dataframe = spark.createDataFrame(data = map_data, schema = map_schema)   \n# dataframe.printSchema()   \n# dataframe.show(truncate=False)    \n\n\nStructType: Before talking about StructType, we need to first understand StructField. StructField is an object that consists of name(a string), dataType, and the nullable. Here’s an example:\n\n\n# StructField(\"first_name\", StringType(), True)\n\nStructType is created by calling the StructField. For example:\n\n# Structure_Data = [((\"Katy\",\"\",\"Wellen\"),\"11111\",\"F\",3500),    \n#     ((\"Samuel\",\"Komo\",\"\"),\"22222\",\"M\",5000),  \n#     ((\"Luke\",\"\",\"Hitch\"),\"33333\",\"M\",8000),   \n#     ((\"Mike\",\"Smith\",\"Nelson\"),\"44444\",\"M\",2500), \n#     ((\"Cathy\",\"Reid\",\"Brown\"),\"\",\"F\",4000)    \n#   ]   \n\n# Structure_Schema = StructType([   \n#         StructField('name', StructType([  \n#              StructField('first_name', StringType(), True),   \n#              StructField('middle_name', StringType(), True),  \n#              StructField('last_name', StringType(), True) \n#              ])), \n#          StructField('id', StringType(), True),   \n#          StructField('gender', StringType(), True),   \n#          StructField('salary', IntegerType(), True)   \n#          ])\n\n# dataframe = spark.createDataFrame(data = Structure_Data, schema = Structure_Schema)\n# dataframe.printSchema()   \n# dataframe.show(truncate=False)"
+  },
+  {
+    "objectID": "posts/nested_columns_in_pyspark/index.html#how-to-unnest",
+    "href": "posts/nested_columns_in_pyspark/index.html#how-to-unnest",
+    "title": "Nested Columns in Pyspark",
+    "section": "How to “Unnest”?",
+    "text": "How to “Unnest”?"
+  },
+  {
+    "objectID": "posts/nested_columns_in_pyspark/index.html#conclusion",
+    "href": "posts/nested_columns_in_pyspark/index.html#conclusion",
+    "title": "Nested Columns in Pyspark",
+    "section": "Conclusion",
+    "text": "Conclusion"
+  }
+]
